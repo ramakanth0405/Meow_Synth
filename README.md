@@ -1,17 +1,8 @@
-graph TD
-    ESP32[ESP32 Controller]
+## Credits and Attribution
 
-    %% I2C Bus
-    ESP32 -- GPIO 21/22 --> OLED[OLED Display]
-    ESP32 -- GPIO 21/22 --> MPR[MPR121 Touch]
-    ESP32 -- GPIO 21/22 --> MPU[MPU6050 Gyro]
+This project is a derivative work based on **[Dodepan](https://github.com/TuriSc/Dodepan)** created by **[TuriSc](https://github.com/TuriSc)**.
 
-    %% I2S Audio
-    ESP32 -- GPIO 25/26/27 --> DAC[PCM5102 DAC]
-    DAC --> Spk[Speaker/Jack]
+* Original Project: [Dodepan Hardware & Software](https://github.com/TuriSc/Dodepan)
+* Original License: [MIT License](https://github.com/TuriSc/Dodepan/blob/main/LICENSE)
 
-    %% Encoder
-    ESP32 -- GPIO 32/33 --> Enc[Rotary Encoder A/B]
-    ESP32 -- GPIO 19 --> Sw[Encoder Switch]
-    Enc -- GND --> Ground
-    Sw -- GND --> Ground
+Modifications in this version includes the addition of Ai-generated code using Google Gemini and adaptations for ESP32.
