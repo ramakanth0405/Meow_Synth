@@ -2,63 +2,46 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-#define OLED_RESET    -1 
-#define SCREEN_ADDRESS 0x3C // Common I2C address
+#define SCREEN_WIDTH  128
+#define SCREEN_HEIGHT 32
+#define OLED_RESET    -1
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); [cite: 7]
 
-// 1. THE CAT BITMAP (16x16 pixels)
-// This is a simple pixel-art cat face.
-const unsigned char PROGMEM catBitmap[] = {
-  0x00, 0x00, 0x0C, 0x30, 0x1E, 0x78, 0x33, 0xCC, 
-  0x3F, 0xFC, 0x7F, 0xFE, 0x7F, 0xFE, 0x7F, 0xFE, 
-  0x7F, 0xFE, 0x3F, 0xFC, 0x3F, 0xFC, 0x13, 0xC8, 
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
-int catX = -16; // Start off-screen to the left
-int catY = 24;  // Vertical position (middle of screen)
+// --- CAT ANIMATION DRAWING ---
+void drawCatFrame(int x) {
+  display.clearDisplay();
+  // Body
+  display.fillRect(x, 15, 20, 10, SSD1306_WHITE); [cite: 15]
+  // Head
+  display.fillCircle(x+20, 12, 8, SSD1306_WHITE); [cite: 16]
+  // Ears
+  display.fillTriangle(x+14, 6, x+18, 0, x+22, 6, SSD1306_WHITE); [cite: 16]
+  display.fillTriangle(x+26, 6, x+30, 0, x+24, 6, SSD1306_WHITE); [cite: 17]
+  // Tail
+  display.drawLine(x, 15, x-5, 5, SSD1306_WHITE); [cite: 17]
+  // Legs
+  if ((x / 4) % 2 == 0) { // Simple walking animation
+     display.drawLine(x+2, 25, x+2, 30, SSD1306_WHITE); [cite: 18]
+     display.drawLine(x+18, 25, x+18, 30, SSD1306_WHITE); [cite: 19]
+  } else {
+     display.drawLine(x+5, 25, x+5, 30, SSD1306_WHITE); [cite: 19]
+     display.drawLine(x+15, 25, x+15, 30, SSD1306_WHITE); [cite: 20]
+  }
+  display.display();
+}
 
 void setup() {
-  Serial.begin(115200);
+  // Initialize Display (Required for animation to work)
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); [cite: 61]
 
-  // Initialize OLED
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
+  // --- EXECUTE BOOT ANIMATION ---
+  // Loops x from -30 (off-screen left) to 128 (off-screen right)
+  for(int x = -30; x < 128; x+=4) {
+    drawCatFrame(x); [cite: 62]
+    // delay(10) is omitted to keep it smooth/fast [cite: 63]
   }
-
-  display.clearDisplay();
-  display.setTextColor(SSD1306_WHITE);
-  display.setTextSize(1);
-  display.setCursor(0,0);
-  display.println("Meow Synth Active");
-  display.display();
-  delay(1000);
 }
 
 void loop() {
-  display.clearDisplay();
-
-  // Draw the Title
-  display.setCursor(20, 0);
-  display.println("MEOW SYNTH");
-
-  // 2. DRAW THE CAT
-  // drawBitmap(x, y, bitmap_data, width, height, color)
-  display.drawBitmap(catX, catY, catBitmap, 16, 16, SSD1306_WHITE);
-
-  display.display();
-
-  // 3. ANIMATION LOGIC (Slide right)
-  catX = catX + 2; // Move 2 pixels to the right
-
-  // If cat goes completely off the right edge, reset to left
-  if (catX > SCREEN_WIDTH) {
-    catX = -16; 
-  }
-
-  delay(50); // Control animation speed
 }
